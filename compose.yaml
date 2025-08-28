@@ -1,0 +1,7 @@
+﻿services:
+  disbot-helper-bot:
+    image: disbot-helper-bot
+    build:
+      context: .
+      dockerfile: DisBot-Helper-Bot/Dockerfile
+
