@@ -16,7 +16,7 @@ public class DocsCommand : ApplicationCommandModule<ApplicationCommandContext>
         ConfigService = configService;
     }
 
-    [SlashCommand("docs", "Close a Thread",
+    [SlashCommand("docs", "https://docs.disbot.app",
         DefaultGuildPermissions = Permissions.MentionEveryone,
         Contexts = [InteractionContextType.Guild]
     )]
@@ -47,7 +47,7 @@ public class DocsCommand : ApplicationCommandModule<ApplicationCommandContext>
                     new ComponentContainerProperties()
                     {
                         new TextDisplayProperties(
-                            $"-# <:reply:1430577881205182555> **Try to read this Document from your Docs. [Read More](https://doc.xyzhub.link{callback!.data[0].document.url})**")
+                            $"-# <:reply:1430577881205182555> **Try to read this Document from your Docs. [Read More](https://doc.xyzhub.link/s/disbot{callback!.data[0].document.url})**")
                     }
                 ]
             }));
