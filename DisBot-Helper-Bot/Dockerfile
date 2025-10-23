@@ -8,10 +8,10 @@ COPY ["DisBot-Helper-Bot/DisBot-Helper-Bot.csproj", "DisBot-Helper-Bot/"]
 RUN dotnet restore "DisBot-Helper-Bot/DisBot-Helper-Bot.csproj"
 COPY . .
 WORKDIR "/src/DisBot-Helper-Bot"
-RUN dotnet publish "./DisBot-Helper-Bot.csproj" -c $BUILD_CONFIGURATION --self-contained true -p:PublishReadyToRun=true -p:PublishSingleFile=true -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./DisBot-Helper-Bot.csproj" -c $BUILD_CONFIGURATION -r linux-x64 --self-contained true -p:PublishReadyToRun=true -p:PublishSingleFile=true -o /app/publish /p:UseAppHost=false
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./DisBot-Helper-Bot.csproj" -c $BUILD_CONFIGURATION --self-contained true -p:PublishReadyToRun=true -p:PublishSingleFile=true -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./DisBot-Helper-Bot.csproj" -c $BUILD_CONFIGURATION -r linux-x64 --self-contained true -p:PublishReadyToRun=true -p:PublishSingleFile=true -o /app/publish /p:UseAppHost=false
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
