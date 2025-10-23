@@ -22,6 +22,6 @@ RUN dotnet publish "./DisBot-Helper-Bot.csproj" -c Release -r linux-x64 \
                 -o /app/publish
 FROM base AS final
 WORKDIR /app
-COPY /app/publish .
+COPY --from=publish /app/publish .
 RUN chmod +x ./DisBot-Helper-Bot
 CMD ["./DisBot-Helper-Bot"]
