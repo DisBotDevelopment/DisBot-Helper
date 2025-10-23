@@ -28,4 +28,8 @@
       <PackageReference Include="NetCord.Services" Version="1.0.0-alpha.422" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="app\publish\" />
+    </ItemGroup>
+
 </Project>

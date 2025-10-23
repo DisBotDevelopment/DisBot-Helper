@@ -23,4 +23,4 @@ RUN dotnet publish "./DisBot-Helper-Bot.csproj" -c Release -r linux-x64 \
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "DisBot-Helper-Bot.dll"]
+CMD ["./DisBot-Helper-Bot"]
