@@ -36,7 +36,7 @@ public class UpdateCommand : ApplicationCommandModule<ApplicationCommandContext>
                     new ComponentContainerProperties()
                     {
                         new TextDisplayProperties(
-                            $"### <a:1412907566308135012:1430128825865474111> <@1063079377975377960> has been updated to `{version}`! {(string.IsNullOrEmpty(changelogUrl) ? "" : $"Read the [Changelog]({changelogUrl}).")}\n-# <@&${{ConfigService.Get().UpdateInfoPingRoleId}}>")
+                            $"### <a:1412907566308135012:1430128825865474111> <@1063079377975377960> has been updated to `{version}`! {(string.IsNullOrEmpty(changelogUrl) ? "" : $"Read the [Changelog]({changelogUrl}).")}\n-# <@&{ConfigService.Get().UpdateInfoPingRoleId}>")
                     }
                 ]
             })
