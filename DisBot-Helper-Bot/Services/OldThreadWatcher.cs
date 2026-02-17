@@ -22,7 +22,7 @@ public class OldThreadWatcher : BackgroundService
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         Timer = new Timer(CheckThreadMessages, null, TimeSpan.Zero,
-            TimeSpan.FromSeconds(5));
+            TimeSpan.FromHours(24));
         return Task.CompletedTask;
     }
 
