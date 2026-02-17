@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <RootNamespace>DisBot_Helper_Bot</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
@@ -10,11 +10,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="NetCord" Version="1.0.0-alpha.422"/>
-        <PackageReference Include="NetCord.Hosting" Version="1.0.0-alpha.422"/>
-        <PackageReference Include="NetCord.Hosting.AspNetCore" Version="1.0.0-alpha.422"/>
-        <PackageReference Include="NetCord.Hosting.Services" Version="1.0.0-alpha.422"/>
-        <PackageReference Include="NetCord.Services" Version="1.0.0-alpha.422"/>
+        <PackageReference Include="NetCord" Version="1.0.0-alpha.468"/>
+        <PackageReference Include="NetCord.Hosting" Version="1.0.0-alpha.468"/>
+        <PackageReference Include="NetCord.Hosting.AspNetCore" Version="1.0.0-alpha.468"/>
+        <PackageReference Include="NetCord.Hosting.Services" Version="1.0.0-alpha.468"/>
+        <PackageReference Include="NetCord.Services" Version="1.0.0-alpha.468"/>
     </ItemGroup>
 
     <ItemGroup>

@@ -4,7 +4,7 @@ public class AppConfig
 {
     public string DiscordBotToken { get; set; }
     public ulong UpdateInfoPingRoleId { get; set; } = 1163773397096988683;
-
+    public string GitHubAuthToken { get; set; }
     public SupportHelper SupportHelper { get; set; } = new SupportHelper();
     public StatusHelper StatusHelper { get; set; } = new StatusHelper();
     public SuggestionHelper SuggestionHelper { get; set; } = new SuggestionHelper();
