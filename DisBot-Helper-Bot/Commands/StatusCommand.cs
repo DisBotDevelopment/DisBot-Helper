@@ -8,111 +8,56 @@ namespace DisBot_Helper_Bot.Commands;
 
 public class StatusCommand : ApplicationCommandModule<ApplicationCommandContext>
 {
-    private readonly ConfigService ConfigService;
-    private readonly RestClient RestClient;
-
-    public StatusCommand(ConfigService configService, RestClient restClient)
-    {
-        ConfigService = configService;
-        RestClient = restClient;
-    }
-
     [SlashCommand("status", "Status Update Message",
         DefaultGuildPermissions = Permissions.MentionEveryone,
         Contexts = [InteractionContextType.Guild]
     )]
-    public async Task Message(
-        [SlashCommandParameter(Name = "type", Description = "Type of the status update")]
-        StatusType type,
-        [SlashCommandParameter(Name = "message", Description = "Message for the users")]
-        string message,
-        [SlashCommandParameter(Name = "title", Description = "Thread Title")]
-        string? title,
-        [SlashCommandParameter(Name = "thread", Description = "Thread for the users")]
-        GuildThread? thread = null
-    )
+    public async Task Message()
     {
-        switch (type)
-        {
-            case StatusType.New:
-            {
-                var statusMessage = await Context.Channel.SendMessageAsync(new MessageProperties()
+        await Context.Interaction.SendResponseAsync(InteractionCallback.Modal(
+                new ModalProperties("openStatusIncidence", "Create Incidence")
                 {
-                    Flags = MessageFlags.IsComponentsV2,
-                    Components =
-                    [
-                        new ComponentContainerProperties([
-                            new TextDisplayProperties(
-                                $"-# <:reply:1430577881205182555> <a:1412907652509335692:1430128828801487000> Incidence.\n\n{message}"
-                                    .Replace("{p}", $"<@&{ConfigService.Get().StatusHelper.StatusRoleId}>")
-                            )
-                        ])
-                    ]
-                });
+                    new LabelProperties("Select your type for the status incidence",
+                        new StringMenuProperties("type", [
+                                new StringMenuSelectOptionProperties(nameof(StatusType.New),
+                                    nameof(StatusType.New))
+                                {
+                                    Emoji = EmojiProperties.Custom(1430128828801487000)
+                                },
+                                new StringMenuSelectOptionProperties(nameof(StatusType.Resolved),
+                                    nameof(StatusType.Resolved))
+                                {
+                                    Emoji = EmojiProperties.Custom(1430128825865474111)
+                                },
+                                new StringMenuSelectOptionProperties(nameof(StatusType.Update),
+                                    nameof(StatusType.Update))
+                                {
+                                    Emoji = EmojiProperties.Custom(1430647258990379008)
+                                }
+                            ]
+                        )
+                    ),
 
-                var statusThread = await statusMessage.CreateGuildThreadAsync(
-                    new GuildThreadFromMessageProperties(title ?? "Status Updates for current Incidence")
-                    {
-                        AutoArchiveDuration = ThreadArchiveDuration.ThreeDays
-                    });
-                await statusThread.SendMessageAsync(new MessageProperties()
-                {
-                    Content =
-                        $"-# <:reply:1430577881205182555> <@&{ConfigService.Get().StatusHelper.StatusRoleId}> A new Incidence has been posted!"
-                });
-            }
-                break;
-            case StatusType.Resolved:
-            {
-                if (thread == null) return;
+                    new LabelProperties("Write a message for the incidence",
+                        new TextInputProperties("message", TextInputStyle.Paragraph)
+                    ),
 
-                var threadMessages = RestClient.GetMessagesAsync(thread.Id).ToBlockingEnumerable().ToList();
-                var firstMessage = threadMessages.Last();
-                var timestamp = Math.Floor((double)firstMessage.CreatedAt.ToUnixTimeMilliseconds() / 1000);
+                    new LabelProperties("Title for the thread (New)",
+                        new TextInputProperties("title", TextInputStyle.Short)
+                        {
+                            Required = false,
+                        }
+                    ),
 
-                await thread.SendMessageAsync(new MessageProperties()
-                {
-                    Flags = MessageFlags.IsComponentsV2,
-                    Components =
-                    [
-                        new ComponentContainerProperties([
-                            new TextDisplayProperties(
-                                $"{message} \n\n\n-# **<a:1412907566308135012:1430128825865474111> Incidence has beed resolved after <t:{timestamp}:R>**"
-                                    .Replace("{p}", $"<@&{ConfigService.Get().StatusHelper.StatusRoleId}>")
-                            )
-                        ])
-                    ]
-                });
-            }
-                break;
-            case StatusType.Update:
-            {
-                if (thread == null) return;
-
-                await thread.SendMessageAsync(new MessageProperties()
-                {
-                    Flags = MessageFlags.IsComponentsV2,
-                    Components =
-                    [
-                        new ComponentContainerProperties([
-                            new TextDisplayProperties(
-                                $"-# <:reply:1430577881205182555> <a:1412907639419043880:1430647258990379008> Incidence Update.\n\n{message}"
-                                    .Replace("{p}", $"<@&{ConfigService.Get().StatusHelper.StatusRoleId}>")
-                            )
-                        ])
-                    ]
-                });
-            }
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(type), type, null);
-        }
-
-        await Context.Interaction.SendResponseAsync(InteractionCallback.Message(new InteractionMessageProperties()
-        {
-            Content = "Done",
-            Flags = MessageFlags.Ephemeral
-        }));
-        await Context.Interaction.DeleteResponseAsync();
+                    new LabelProperties("Select the thread (Update/Resolved)",
+                        new ChannelMenuProperties("thread")
+                        {
+                            Required = false,
+                            ChannelTypes = [ChannelType.PublicGuildThread, ChannelType.AnnouncementGuildThread]
+                        }
+                    )
+                }
+            )
+        );
     }
 }
