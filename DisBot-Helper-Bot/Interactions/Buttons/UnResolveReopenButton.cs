@@ -17,8 +17,6 @@ public class UnResolveReopenButton : ComponentInteractionModule<ButtonInteractio
     [ComponentInteraction("unResolveReopen")]
     public async Task UnResolveReopenExecute()
     {
-        var forumThread = await ((Context.Channel as PublicGuildThread)!).GetAsync();
-
         await Context.Interaction.SendResponseAsync(InteractionCallback.Modal(
             new ModalProperties("unResolveReopenModal", "Re-open your Post")
             {

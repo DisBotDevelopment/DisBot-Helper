@@ -19,56 +19,57 @@ public class OldThreadWatcher : BackgroundService
         Logger = logger;
     }
 
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        Timer = new Timer(CheckThreadMessages, null, TimeSpan.Zero,
-            TimeSpan.FromHours(24));
-        return Task.CompletedTask;
-    }
-
-    private async void CheckThreadMessages(object? state)
-    {
-        try
+        while (!stoppingToken.IsCancellationRequested)
         {
-            var channel =
-                await Client.GetActiveGuildThreadsAsync(1084507523492626522);
-
-            foreach (var guildThread in channel)
+            try
             {
-                if (guildThread.ParentId != ConfigService.Get().SupportHelper.SupportChannelId) continue;
-                if ((guildThread as PublicGuildThread)!.AppliedTags!.Contains(ConfigService.Get().SupportHelper
-                        .SupportAutoTagId)) return;
+                Logger.LogInformation("Started Thread-Checker for OldThreads.");
+                
+                var channel =
+                    await Client.GetActiveGuildThreadsAsync(1084507523492626522);
 
-                var messages = guildThread.GetMessagesAsync().ToBlockingEnumerable().ToList();
-                var lastMessage = messages.First();
-
-                if (!((DateTimeOffset.Now - lastMessage.CreatedAt).TotalMicroseconds > 2)) continue;
-                if (lastMessage.Components.Count != 0 && lastMessage.Components.First() is ComponentContainer)
+                foreach (var guildThread in channel)
                 {
-                    if (lastMessage.Components.OfType<ComponentContainer>().First().Components
-                        .OfType<TextDisplay>().First()
-                        .Content.Contains("1430573811539120349")) return;
-                }
+                    if (guildThread.ParentId != ConfigService.Get().SupportHelper.SupportChannelId) continue;
+                    if ((guildThread as PublicGuildThread)!.AppliedTags!.Contains(ConfigService.Get().SupportHelper
+                            .SupportAutoTagId)) return;
 
-                await guildThread.SendMessageAsync(
-                    new MessageProperties()
+                    var messages = guildThread.GetMessagesAsync().ToBlockingEnumerable().ToList();
+                    var lastMessage = messages.First();
+
+                    if (!((DateTimeOffset.Now - lastMessage.CreatedAt).TotalMicroseconds > 2)) continue;
+                    if (lastMessage.Components.Count != 0 && lastMessage.Components.First() is ComponentContainer)
                     {
-                        Flags = MessageFlags.IsComponentsV2,
-                        Components =
-                        [
-                            new ComponentContainerProperties()
-                            {
-                                new TextDisplayProperties(
-                                    $"-# <:reply:1430577881205182555> Hey <@{guildThread.OwnerId}> your Thread is older then 10 days it is Active?\n-# If not please use the </resolve:1430573811539120349> command to close it.")
-                            }
-                        ]
+                        if (lastMessage.Components.OfType<ComponentContainer>().First().Components
+                            .OfType<TextDisplay>().First()
+                            .Content.Contains("1430573811539120349")) return;
                     }
-                );
+
+                    await guildThread.SendMessageAsync(
+                        new MessageProperties()
+                        {
+                            Flags = MessageFlags.IsComponentsV2,
+                            Components =
+                            [
+                                new ComponentContainerProperties()
+                                {
+                                    new TextDisplayProperties(
+                                        $"-# <:reply:1430577881205182555> Hey <@{guildThread.OwnerId}> your Thread is older then 10 days it is Active?\n-# If not please use the </resolve:1430573811539120349> command to close it.")
+                                }
+                            ]
+                        }
+                    );
+                }
             }
-        }
-        catch (Exception e)
-        {
-            Logger.LogError(e.Message);
+            catch (Exception e)
+            {
+                Logger.LogError(e.Message);
+            }
+
+
+           await Task.Delay(TimeSpan.FromHours(24));
         }
     }
 }
